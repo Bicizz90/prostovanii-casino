@@ -2,6 +2,7 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PROSTOVANII CASINO - VEGAS</title>
     <style>
         body {
@@ -18,72 +19,69 @@
             min-height: 100vh;
         }
 
-        /* --- SEMN LAS VEGAS CENTRAT SUS --- */
+        /* --- SEMN LAS VEGAS --- */
         .vegas-sign {
             position: relative;
             display: inline-block;
-            margin: 20px auto;
-            padding: 15px 50px;
+            margin: 10px auto;
+            padding: 10px 30px;
             background: #d00000;
-            border: 6px solid #fff;
+            border: 4px solid #fff;
             border-radius: 100px / 50px;
-            box-shadow: 0 0 30px #f00, inset 0 0 20px #000;
+            box-shadow: 0 0 20px #f00, inset 0 0 15px #000;
             z-index: 10;
         }
 
         .vegas-sign::before {
             content: "";
             position: absolute;
-            top: -12px; left: -12px; right: -12px; bottom: -12px;
-            border: 5px dotted #ffd700;
+            top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border: 3px dotted #ffd700;
             border-radius: 110px / 55px;
             animation: blink-lights 0.4s infinite;
         }
 
         @keyframes blink-lights {
-            0% { opacity: 1; }
-            50% { opacity: 0.2; }
-            100% { opacity: 1; }
+            0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; }
         }
 
         .main-title {
-            font-size: 45px;
+            font-size: clamp(22px, 7vw, 45px);
             margin: 0;
             color: white;
             text-transform: uppercase;
-            line-height: 1;
-            text-shadow: 3px 3px 0 #000;
+            line-height: 1.1;
+            text-shadow: 2px 2px 0 #000;
         }
 
-        .vegas-star {
-            color: #ffd700;
-            font-size: 16px;
-            letter-spacing: 5px;
-        }
-
-        /* --- APARATUL CENTRAT --- */
+        /* --- APARATUL --- */
         .machine {
             background: linear-gradient(180deg, #300 0%, #100 100%);
-            padding: 25px;
-            border-radius: 30px;
+            padding: 15px;
+            border-radius: 20px;
             display: inline-block;
-            border: 6px solid #b8860b;
-            box-shadow: 0 0 50px rgba(255, 0, 0, 0.6);
-            margin-top: 10px;
+            border: 4px solid #b8860b;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            margin-top: 5px;
+            max-width: 95%;
         }
 
         .reels-container {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             background: #000;
-            padding: 12px;
-            border-radius: 15px;
+            padding: 8px;
+            border-radius: 12px;
             border: 2px solid #444;
+            justify-content: center;
         }
 
         .reel {
-            width: 140px; height: 200px;
-            position: relative; overflow: hidden; background: #111;
+            width: clamp(75px, 25vw, 140px);
+            height: clamp(120px, 35vh, 200px);
+            position: relative; 
+            overflow: hidden; 
+            background: #111;
         }
 
         .reel-strip {
@@ -91,26 +89,28 @@
             display: flex; flex-direction: column;
         }
 
-        .reel-strip img { width: 140px; height: 200px; object-fit: cover; }
+        .reel-strip img { 
+            width: 100%; 
+            height: clamp(120px, 35vh, 200px); 
+            object-fit: cover; 
+        }
 
         /* --- CONTROALE --- */
         .controls {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin-top: 15px;
             width: 100%;
         }
 
         .bet-row {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .balance-info {
-            font-size: 24px;
+            font-size: clamp(16px, 5vw, 24px);
             color: #0f0;
             text-shadow: 0 0 10px rgba(0,255,0,0.3);
             font-weight: bold;
@@ -118,24 +118,45 @@
         }
 
         .bet-btn {
-            background: #200; color: white; border: 2px solid #f00;
-            padding: 10px 14px; cursor: pointer; border-radius: 8px;
-            font-weight: bold; font-size: 14px;
+            background: #200; 
+            color: white; 
+            border: 2px solid #f00;
+            padding: 8px 12px; 
+            cursor: pointer; 
+            border-radius: 8px;
+            font-weight: bold; 
+            font-size: 13px;
             transition: 0.2s;
+            white-space: nowrap;
         }
-        .bet-btn.active { background: #ffd700; color: black; border-color: #fff; box-shadow: 0 0 10px #ffd700; }
+        .bet-btn.active { 
+            background: #ffd700; 
+            color: black; 
+            border-color: #fff; 
+            box-shadow: 0 0 10px #ffd700;
+        }
 
         .spin-btn {
-            font-size: 30px; padding: 15px 80px; cursor: pointer; border-radius: 50px;
-            border: none; background: linear-gradient(#f00, #800);
-            color: white; font-weight: 900; margin-top: 10px;
-            box-shadow: 0 6px 0 #400;
+            font-size: clamp(22px, 6vw, 32px); 
+            padding: 12px 50px; 
+            cursor: pointer; 
+            border-radius: 50px;
+            border: none; 
+            background: linear-gradient(#f00, #800);
+            color: white; 
+            font-weight: 900;
+            box-shadow: 0 4px 0 #400;
             text-transform: uppercase;
         }
-        .spin-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #400; }
-        .spin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .spin-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #400; }
+        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
-        #result { font-size: 40px; margin-top: 15px; height: 50px; font-weight: 900; width: 100%; }
+        #result { 
+            font-size: clamp(18px, 6vw, 35px); 
+            margin-top: 10px; 
+            min-height: 40px; 
+            font-weight: 900; 
+        }
         
         .win-shake {
             color: #ffd700;
@@ -153,11 +174,10 @@
 <body>
 
 <canvas id="canvas"></canvas>
-
 <audio id="audio-win" src="win.wav"></audio>
 
 <div class="vegas-sign">
-    <div class="vegas-star">✦ ✦ WELCOME ✦ ✦</div>
+    <div style="color: #ffd700; font-size: 11px; letter-spacing: 2px;">✦ WELCOME ✦</div>
     <h1 class="main-title">PROSTOVANII<br>CASINO</h1>
 </div>
 
@@ -186,7 +206,6 @@
     let wallet = 10000;
     let currentBet = 50;
     const symbols = ["Image (2).jpg", "Image (3).jpg", "Image (4).jpg", "wild.jpg"];
-    const imgH = 200;
     const itemsCount = 40;
 
     const canvas = document.getElementById('canvas');
@@ -194,7 +213,12 @@
     let moneyParticles = [];
     const sndWin = document.getElementById('audio-win');
 
+    function getImgHeight() {
+        return document.querySelector('.reel').offsetHeight;
+    }
+
     function init() {
+        const imgH = getImgHeight();
         document.querySelectorAll('.reel-strip').forEach(s => {
             s.innerHTML = '';
             for(let i=0; i<itemsCount; i++){
@@ -219,6 +243,8 @@
         
         const btn = document.getElementById('spin-btn');
         const res = document.getElementById('result');
+        const imgH = getImgHeight();
+        
         btn.disabled = true;
         res.innerText = "";
         res.classList.remove('win-shake');
@@ -236,10 +262,11 @@
             checkWin(results);
             btn.disabled = false;
             setTimeout(() => {
+                const h = getImgHeight();
                 for(let i=1; i<=3; i++) {
                     let s = document.getElementById('strip'+i);
                     s.style.transition = "none";
-                    s.style.top = `-${(itemsCount-1)*imgH}px`;
+                    s.style.top = `-${(itemsCount-1)*h}px`;
                     s.children[itemsCount-1].src = results[i-1];
                 }
             }, 500);
@@ -255,16 +282,11 @@
 
         if(win) {
             sndWin.currentTime = 0;
-            sndWin.play().catch(e => console.log("Sunet blocat de browser"));
-            
-            setTimeout(() => {
-                sndWin.pause();
-                sndWin.currentTime = 0;
-            }, 4000);
+            sndWin.play().catch(e => {});
+            setTimeout(() => { sndWin.pause(); sndWin.currentTime = 0; }, 4000);
 
             let mult = dom.includes("(4)") || dom === "wild.jpg" ? 100 : dom.includes("(3)") ? 20 : 10;
-            let gain = currentBet * mult;
-            wallet += gain;
+            wallet += currentBet * mult;
             document.getElementById('balance-val').innerText = wallet;
             res.innerText = "L-AI RUPT BAAAAA!";
             res.classList.add('win-shake');
@@ -275,72 +297,37 @@
         }
     }
 
-    // --- EFECT "BOMBA" DE BANI ---
     function rainMoney() {
-        // Creăm o explozie de 100 de particule
         for(let i=0; i<100; i++) {
             moneyParticles.push({
-                x: canvas.width / 2, // Pleacă din centru
-                y: canvas.height / 2,
-                w: 40 + Math.random() * 30,
-                h: 20 + Math.random() * 15,
-                // Direcții aleatorii de explozie
-                velX: (Math.random() - 0.5) * 20, 
-                velY: (Math.random() - 0.7) * 25,
+                x: Math.random() * canvas.width,
+                y: -50,
+                w: 50, h: 25,
+                speedY: 4 + Math.random() * 6,
                 rot: Math.random() * 360,
-                rotSpeed: (Math.random() - 0.5) * 15,
-                type: Math.random() > 0.4 ? 'bill' : 'coin', // Bancnotă sau Monedă
-                color: Math.random() > 0.5 ? '#2e7d32' : '#4caf50', // Nuanțe de verde
-                hue: 45 + Math.random() * 10 // Pentru auriul monedelor
+                rotSpeed: (Math.random() - 0.5) * 15
             });
         }
     }
 
     function draw() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        
         moneyParticles.forEach((p, i) => {
-            // Fizică: mișcare + gravitație
-            p.x += p.velX;
-            p.y += p.velY;
-            p.velY += 0.5; // Forța gravitațională
-            p.rot += p.rotSpeed;
-
+            p.y += p.speedY; p.rot += p.rotSpeed;
             ctx.save();
             ctx.translate(p.x, p.y);
             ctx.rotate(p.rot * Math.PI / 180);
-
-            if(p.type === 'bill') {
-                // Desenăm Bancnotă cu "wave" (ondulare optică)
-                let wave = Math.sin(p.rot * 0.05) * 5;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-                ctx.strokeStyle = "#fff";
-                ctx.lineWidth = 1;
-                ctx.strokeRect(-p.w/2, -p.h/2, p.w, p.h);
-                // Detaliu bancnotă
-                ctx.fillStyle = "rgba(255,255,255,0.3)";
-                ctx.beginPath();
-                ctx.arc(0,0, p.h/3, 0, Math.PI*2);
-                ctx.fill();
-            } else {
-                // Desenăm Monedă de Aur 3D (care se rotește)
-                let coinWidth = Math.abs(Math.cos(p.rot * 0.1)) * p.w / 2;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, coinWidth, p.w/2, 0, 0, Math.PI*2);
-                ctx.fillStyle = `hsl(${p.hue}, 100%, 50%)`;
-                ctx.fill();
-                ctx.strokeStyle = "#b8860b";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-
+            ctx.fillStyle = "#2e7d32";
+            ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.fillStyle = "white";
+            ctx.font = "bold 14px Arial";
+            ctx.fillText("$", -5, 5);
             ctx.restore();
-
-            // Ștergem particulele care ies din ecran
-            if(p.y > canvas.height + 100) moneyParticles.splice(i, 1);
+            if(p.y > canvas.height + 50) moneyParticles.splice(i, 1);
         });
-        
         requestAnimationFrame(draw);
     }
 
@@ -353,6 +340,7 @@
     window.onresize = () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        init();
     }
 </script>
 
