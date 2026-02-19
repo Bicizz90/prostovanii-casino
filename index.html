@@ -127,7 +127,6 @@
             font-weight: bold; 
             font-size: 13px;
             transition: 0.2s;
-            white-space: nowrap;
         }
         .bet-btn.active { 
             background: #ffd700; 
@@ -149,7 +148,7 @@
             text-transform: uppercase;
         }
         .spin-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #400; }
-        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); }
+        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
 
         #result { 
             font-size: clamp(18px, 6vw, 35px); 
@@ -174,7 +173,7 @@
 <body>
 
 <canvas id="canvas"></canvas>
-<audio id="audio-win" src="win.wav"></audio>
+<audio id="audio-win" src="win.wav" preload="auto"></audio>
 
 <div class="vegas-sign">
     <div style="color: #ffd700; font-size: 11px; letter-spacing: 2px;">✦ WELCOME ✦</div>
@@ -205,6 +204,9 @@
 <script>
     let wallet = 10000;
     let currentBet = 50;
+    let isSpinning = false;
+    let audioUnlocked = false;
+
     const symbols = ["Image (2).jpg", "Image (3).jpg", "Image (4).jpg", "wild.jpg"];
     const itemsCount = 40;
 
@@ -226,18 +228,32 @@
                 img.src = symbols[Math.floor(Math.random()*symbols.length)];
                 s.appendChild(img);
             }
+            s.style.transition = "none";
             s.style.top = `-${(itemsCount-1)*imgH}px`;
         });
     }
 
     function setBet(v, b) {
+        if(isSpinning) return;
         currentBet = v;
         document.querySelectorAll('.bet-btn').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
     }
 
     function spin() {
+        if(isSpinning) return;
         if(wallet < currentBet) return alert("N-ai bani, prostovane!");
+
+        // DEBLOCARE AUDIO LA PRIMUL CLICK (PENTRU BROWSER)
+        if(!audioUnlocked) {
+            sndWin.play().then(() => {
+                sndWin.pause();
+                sndWin.currentTime = 0;
+                audioUnlocked = true;
+            }).catch(e => console.log("Audio waiting for interaction"));
+        }
+        
+        isSpinning = true;
         wallet -= currentBet;
         document.getElementById('balance-val').innerText = wallet;
         
@@ -246,7 +262,8 @@
         const imgH = getImgHeight();
         
         btn.disabled = true;
-        res.innerText = "";
+        res.innerText = "NOROC...";
+        res.style.color = "gray";
         res.classList.remove('win-shake');
 
         let results = [];
@@ -254,6 +271,11 @@
             let s = document.getElementById('strip'+i);
             let idx = Math.floor(Math.random()*symbols.length);
             results.push(s.children[idx].src);
+            
+            s.style.transition = "none";
+            s.style.top = `-${(itemsCount-1)*imgH}px`;
+            s.offsetHeight; // force reflow
+
             s.style.transition = `top ${1.5+i*0.5}s cubic-bezier(0.1, 0, 0.1, 1)`;
             s.style.top = `-${idx*imgH}px`;
         }
@@ -261,15 +283,7 @@
         setTimeout(() => {
             checkWin(results);
             btn.disabled = false;
-            setTimeout(() => {
-                const h = getImgHeight();
-                for(let i=1; i<=3; i++) {
-                    let s = document.getElementById('strip'+i);
-                    s.style.transition = "none";
-                    s.style.top = `-${(itemsCount-1)*h}px`;
-                    s.children[itemsCount-1].src = results[i-1];
-                }
-            }, 500);
+            isSpinning = false;
         }, 3200);
     }
 
@@ -281,14 +295,21 @@
         let win = s.every(x => x === dom || x === "wild.jpg");
 
         if(win) {
+            // REDARE SUNET
             sndWin.currentTime = 0;
-            sndWin.play().catch(e => {});
-            setTimeout(() => { sndWin.pause(); sndWin.currentTime = 0; }, 4000);
+            sndWin.play().catch(e => console.log("Eroare sunet:", e));
+            
+            // Oprește sunetul după 4 secunde
+            setTimeout(() => {
+                sndWin.pause();
+                sndWin.currentTime = 0;
+            }, 4000);
 
             let mult = dom.includes("(4)") || dom === "wild.jpg" ? 100 : dom.includes("(3)") ? 20 : 10;
             wallet += currentBet * mult;
             document.getElementById('balance-val').innerText = wallet;
             res.innerText = "L-AI RUPT BAAAAA!";
+            res.style.color = "#ffd700";
             res.classList.add('win-shake');
             rainMoney();
         } else {
@@ -320,11 +341,7 @@
             ctx.fillStyle = "#2e7d32";
             ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
             ctx.strokeStyle = "#fff";
-            ctx.lineWidth = 1;
             ctx.strokeRect(-p.w/2, -p.h/2, p.w, p.h);
-            ctx.fillStyle = "white";
-            ctx.font = "bold 14px Arial";
-            ctx.fillText("$", -5, 5);
             ctx.restore();
             if(p.y > canvas.height + 50) moneyParticles.splice(i, 1);
         });
