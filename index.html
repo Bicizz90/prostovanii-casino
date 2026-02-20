@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROSTOVANII CASINO - YAKARI EDITION</title>
+    <title>PROSTOVANII CASINO - ADITA & YAKARI EDITION</title>
     <style>
         body {
             background: #050505; color: white; text-align: center;
@@ -54,6 +54,7 @@
             object-fit: cover; border-bottom: 1px solid #222;
         }
 
+        /* --- EFECTE SPECIALE --- */
         .win-glow {
             filter: brightness(1.5) contrast(1.2);
             box-shadow: inset 0 0 20px #ffd700;
@@ -62,11 +63,15 @@
         }
         @keyframes pulse-glow { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-        #yakari-overlay {
+        /* OVERLAY YAKARI & ADITA */
+        #yakari-overlay, #adita-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; justify-content: center;
-            align-items: center; z-index: 2000; pointer-events: none;
+            background: rgba(0,0,0,0.9); display: none; justify-content: center;
+            align-items: center; z-index: 2000;
         }
+        
+        #adita-video { width: 90%; max-width: 1000px; border: 5px solid gold; box-shadow: 0 0 50px #ffd700; }
+
         #yakari-text {
             font-size: 14vw; color: #ff0000; text-shadow: 5px 5px 0 #fff, -5px -5px 20px #f00;
             font-weight: 900; animation: yakari-anim 0.2s infinite;
@@ -103,11 +108,13 @@
 <body>
 
 <div id="yakari-overlay"><div id="yakari-text">YAKARIIIIIIII</div></div>
+<div id="adita-overlay"><video id="adita-video" src="adita bani.mp4"></video></div>
 <canvas id="canvas"></canvas>
 
 <audio id="audio-win" src="win.wav" preload="auto"></audio>
 <audio id="audio-spin" src="spin.mp3" preload="auto"></audio>
 <audio id="audio-yakari" src="yakari.mp3" preload="auto"></audio>
+<audio id="audio-adita-win" src="adita win.mp3" preload="auto"></audio>
 
 <div class="vegas-sign">
     <div style="color: #ffd700; font-size: 11px; letter-spacing: 2px;">✦ WELCOME ✦</div>
@@ -146,7 +153,7 @@
 
     const symbols = [
         "speciala.jpg", "Image (3).jpg", "Image (4).jpg", 
-        "Image (5).jpeg", "Image (6).jpeg", "Image (7).jpeg", "wild.jpg"
+        "Image (5).jpeg", "Image (6).jpeg", "Image (7).jpeg", "wild.jpg", "adita.jpg"
     ];
     const itemsCount = 60; 
 
@@ -156,6 +163,7 @@
     const sndWin = document.getElementById('audio-win');
     const sndSpin = document.getElementById('audio-spin');
     const sndYakari = document.getElementById('audio-yakari');
+    const sndAdita = document.getElementById('audio-adita-win');
 
     function getSingleImgHeight() {
         const firstImg = document.querySelector('.reel-strip img');
@@ -188,7 +196,7 @@
 
     function stopAllSounds() {
         clearTimeout(winSoundTimer);
-        [sndWin, sndYakari, sndSpin].forEach(s => {
+        [sndWin, sndYakari, sndSpin, sndAdita].forEach(s => {
             s.pause();
             s.currentTime = 0;
         });
@@ -199,12 +207,14 @@
         if(freeSpins === 0 && wallet < currentBet) return;
         stopAllSounds();
         document.querySelectorAll('img').forEach(img => img.classList.remove('win-glow'));
+        
         if(!audioUnlocked) {
-            [sndWin, sndSpin, sndYakari].forEach(track => {
+            [sndWin, sndSpin, sndYakari, sndAdita].forEach(track => {
                 track.play().then(() => { track.pause(); track.currentTime = 0; }).catch(e => {});
             });
             audioUnlocked = true;
         }
+
         isSpinning = true;
         if(freeSpins > 0) {
             freeSpins--;
@@ -213,13 +223,14 @@
             wallet -= currentBet;
             document.getElementById('balance-val').innerText = wallet;
         }
+        
         sndSpin.play().catch(e => {});
         const btn = document.getElementById('spin-btn');
         const res = document.getElementById('result');
         const imgH = getSingleImgHeight();
         btn.disabled = true;
-        res.innerText = freeSpins > 0 ? "YAKARI SPINS..." : "NOROC...";
-        res.style.color = "gray";
+        res.innerText = "NOROC...";
+
         let stopIndices = [];
         for(let i=1; i<=3; i++) {
             let s = document.getElementById('strip'+i);
@@ -231,34 +242,63 @@
             s.style.transition = `top ${1.2 + i * 0.3}s cubic-bezier(0.1, 0, 0.1, 1)`;
             s.style.top = `-${stopIdx * imgH}px`;
         }
+
         setTimeout(() => {
             sndSpin.pause();
             checkWin3x3(stopIndices);
-            btn.disabled = false;
-            isSpinning = false;
-            if(freeSpins > 0) setTimeout(spin, 1800);
+            // Butonul se deblochează doar dacă nu rulează speciala Adita (gestionat în checkWin3x3)
         }, 2800);
     }
 
     function checkWin3x3(stopIndices) {
         const res = document.getElementById('result');
         const strips = [document.getElementById('strip1'), document.getElementById('strip2'), document.getElementById('strip3')];
+        
         const matrix = [
             [strips[0].children[stopIndices[0]], strips[0].children[stopIndices[0]+1], strips[0].children[stopIndices[0]+2]],
             [strips[1].children[stopIndices[1]], strips[1].children[stopIndices[1]+1], strips[1].children[stopIndices[1]+2]],
             [strips[2].children[stopIndices[2]], strips[2].children[stopIndices[2]+1], strips[2].children[stopIndices[2]+2]]
         ];
+
+        // 1. Verificare ADITA SCATTER (3 oriunde pe ecran)
+        let aditaCount = 0;
+        let aditaImages = [];
+        for(let c=0; c<3; c++){
+            for(let r=0; r<3; r++){
+                let fileName = decodeURIComponent(matrix[c][r].src.split('/').pop());
+                if(fileName === "adita.jpg"){
+                    aditaCount++;
+                    aditaImages.push(matrix[c][r]);
+                }
+            }
+        }
+
+        if(aditaCount >= 3){
+            isSpinning = true;
+            aditaImages.forEach(img => img.classList.add('win-glow'));
+            wallet += currentBet * 100;
+            document.getElementById('balance-val').innerText = wallet;
+            res.innerText = "ADITA SCATTER WIN!";
+            res.style.color = "#ffd700";
+            triggerAditaVideo();
+            return; // Oprește orice altă verificare (Yakari)
+        }
+
+        // 2. Verificare Linii Normale
         const paylines = [
             [matrix[0][0], matrix[1][0], matrix[2][0]], [matrix[0][1], matrix[1][1], matrix[2][1]], [matrix[0][2], matrix[1][2], matrix[2][2]],
             [matrix[0][0], matrix[1][1], matrix[2][2]], [matrix[0][2], matrix[1][1], matrix[2][0]]
         ];
+
         let totalWin = 0;
         let specialTriggered = false;
+
         paylines.forEach(line => {
             let names = line.map(img => decodeURIComponent(img.src.split('/').pop()));
             let nonWild = names.filter(n => n !== "wild.jpg");
             let base = nonWild.length > 0 ? nonWild[0] : "wild.jpg";
-            if(names.every(n => n === base || n === "wild.jpg")) {
+
+            if(base !== "adita.jpg" && names.every(n => n === base || n === "wild.jpg")) {
                 let mult = 15;
                 if(base === "speciala.jpg") { specialTriggered = true; mult = 150; }
                 else if(base.includes("(4)") || base === "wild.jpg") { mult = 50; }
@@ -266,12 +306,14 @@
                 line.forEach(img => img.classList.add('win-glow'));
             }
         });
-        if(specialTriggered) triggerYakari();
-        else if(totalWin > 0) {
-            sndWin.currentTime = 0;
-            sndWin.play();
+
+        if(specialTriggered) {
+            triggerYakari();
+        } else if(totalWin > 0) {
+            sndWin.currentTime = 0; sndWin.play();
             winSoundTimer = setTimeout(() => { sndWin.pause(); }, 3000);
         }
+
         if(totalWin > 0) {
             wallet += totalWin;
             document.getElementById('balance-val').innerText = wallet;
@@ -282,6 +324,38 @@
             res.innerText = freeSpins > 0 ? "DĂ-I YAKARI!" : "MAI BAGĂ O FISĂ!";
             res.style.color = "white";
         }
+
+        // Finalizare rotire normală
+        finishSpin();
+    }
+
+    function finishSpin() {
+        isSpinning = false;
+        document.getElementById('spin-btn').disabled = false;
+        if(freeSpins > 0) setTimeout(spin, 1800);
+    }
+
+    function triggerAditaVideo() {
+        stopAllSounds();
+        const overlay = document.getElementById('adita-overlay');
+        const video = document.getElementById('adita-video');
+        const btn = document.getElementById('spin-btn');
+        
+        btn.disabled = true;
+        overlay.style.display = 'flex';
+        video.play();
+        sndAdita.play();
+        
+        const closeAdita = () => {
+            if(overlay.style.display === 'none') return; // Prevenire dublă execuție
+            overlay.style.display = 'none';
+            video.pause();
+            video.currentTime = 0;
+            finishSpin(); // Permite jocului să continue
+        };
+
+        video.onended = closeAdita;
+        setTimeout(closeAdita, 10000); // Siguranță 10 secunde
     }
 
     function triggerYakari() {
@@ -314,18 +388,12 @@
         }
     }
 
-    // --- EFECTUL DE PLOAIE DE DOLARI ACTUALIZAT ---
     function rainMoney() {
         for(let i=0; i<100; i++) {
             moneyParticles.push({
-                x: Math.random() * canvas.width, 
-                y: -50, 
-                w: 60, // Bancnote mai lungi
-                h: 30, 
-                speedY: 2 + Math.random() * 5, 
-                rot: Math.random() * 360, 
-                rotSpeed: (Math.random() - 0.5) * 10,
-                swing: Math.random() * 5 // Mișcare laterală
+                x: Math.random() * canvas.width, y: -50, w: 60, h: 30,
+                speedY: 2 + Math.random() * 5, rot: Math.random() * 360,
+                rotSpeed: (Math.random() - 0.5) * 10
             });
         }
     }
@@ -333,32 +401,15 @@
     function draw() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
         moneyParticles.forEach((p, i) => {
-            p.y += p.speedY; 
-            p.rot += p.rotSpeed;
-            p.x += Math.sin(p.y / 30) * 2; // Pendulare stânga-dreapta
-
+            p.y += p.speedY; p.rot += p.rotSpeed;
+            p.x += Math.sin(p.y / 30) * 2;
             ctx.save();
-            ctx.translate(p.x, p.y); 
-            ctx.rotate(p.rot * Math.PI / 180);
-            
-            // Desenăm fundalul bancnotei (verde)
-            ctx.fillStyle = "#2e7d32"; 
-            ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-            
-            // Contur alb
-            ctx.strokeStyle = "#fff"; 
-            ctx.lineWidth = 1;
-            ctx.strokeRect(-p.w/2, -p.h/2, p.w, p.h);
-            
-            // Adăugăm simbolul $
-            ctx.fillStyle = "white";
-            ctx.font = "bold 18px Arial";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText("$", 0, 0); 
-            
+            ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+            ctx.fillStyle = "#2e7d32"; ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.strokeStyle = "#fff"; ctx.strokeRect(-p.w/2, -p.h/2, p.w, p.h);
+            ctx.fillStyle = "white"; ctx.font = "bold 18px Arial"; ctx.textAlign = "center";
+            ctx.fillText("$", 0, 7);
             ctx.restore();
-            
             if(p.y > canvas.height + 50) moneyParticles.splice(i, 1);
         });
         requestAnimationFrame(draw);
@@ -368,7 +419,6 @@
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         init(); draw();
     };
-
     window.onresize = () => {
         canvas.width = window.innerWidth; canvas.height = window.innerHeight;
     };
