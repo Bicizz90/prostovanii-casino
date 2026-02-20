@@ -3,176 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROSTOVANII CASINO - VEGAS</title>
+    <title>PROSTOVANII CASINO - YAKARI EDITION</title>
     <style>
         body {
-            background: #050505;
-            color: white;
-            text-align: center;
-            font-family: 'Arial Black', sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            background: #050505; color: white; text-align: center;
+            font-family: 'Arial Black', sans-serif; margin: 0; padding: 0;
+            overflow: hidden; display: flex; flex-direction: column;
+            align-items: center; min-height: 100vh;
         }
 
         /* --- SEMN LAS VEGAS --- */
         .vegas-sign {
-            position: relative;
-            display: inline-block;
-            margin: 10px auto;
-            padding: 10px 30px;
-            background: #d00000;
-            border: 4px solid #fff;
-            border-radius: 100px / 50px;
-            box-shadow: 0 0 20px #f00, inset 0 0 15px #000;
+            position: relative; display: inline-block; margin: 10px auto;
+            padding: 10px 30px; background: #d00000; border: 4px solid #fff;
+            border-radius: 100px / 50px; box-shadow: 0 0 20px #f00, inset 0 0 15px #000;
             z-index: 10;
         }
-
         .vegas-sign::before {
-            content: "";
-            position: absolute;
-            top: -8px; left: -8px; right: -8px; bottom: -8px;
-            border: 3px dotted #ffd700;
-            border-radius: 110px / 55px;
-            animation: blink-lights 0.4s infinite;
+            content: ""; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border: 3px dotted #ffd700; border-radius: 110px / 55px; animation: blink-lights 0.4s infinite;
         }
-
-        @keyframes blink-lights {
-            0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; }
-        }
+        @keyframes blink-lights { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
 
         .main-title {
-            font-size: clamp(22px, 7vw, 45px);
-            margin: 0;
-            color: white;
-            text-transform: uppercase;
-            line-height: 1.1;
-            text-shadow: 2px 2px 0 #000;
+            font-size: clamp(22px, 7vw, 45px); margin: 0; color: white;
+            text-transform: uppercase; line-height: 1.1; text-shadow: 2px 2px 0 #000;
         }
 
         .machine {
             background: linear-gradient(180deg, #300 0%, #100 100%);
-            padding: 15px;
-            border-radius: 20px;
-            display: inline-block;
-            border: 4px solid #b8860b;
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-            margin-top: 5px;
-            max-width: 95%;
+            padding: 15px; border-radius: 20px; display: inline-block;
+            border: 4px solid #b8860b; box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
+            margin-top: 5px; max-width: 95%; position: relative;
         }
 
         .reels-container {
-            display: flex;
-            gap: 8px;
-            background: #000;
-            padding: 8px;
-            border-radius: 12px;
-            border: 2px solid #444;
-            justify-content: center;
+            display: flex; gap: 8px; background: #000; padding: 8px;
+            border-radius: 12px; border: 2px solid #444; justify-content: center;
         }
 
         .reel {
             width: clamp(75px, 25vw, 140px);
-            height: clamp(120px, 35vh, 200px);
-            position: relative; 
-            overflow: hidden; 
-            background: #111;
+            height: clamp(225px, 60vh, 360px);
+            position: relative; overflow: hidden; background: #111;
         }
 
-        .reel-strip {
-            position: absolute; top: 0; left: 0; width: 100%;
-            display: flex; flex-direction: column;
-        }
-
+        .reel-strip { position: absolute; width: 100%; display: flex; flex-direction: column; }
         .reel-strip img { 
-            width: 100%; 
-            height: clamp(120px, 35vh, 200px); 
-            object-fit: cover; 
+            width: 100%; height: clamp(75px, 20vh, 120px); 
+            object-fit: cover; border-bottom: 1px solid #222;
         }
 
-        .controls {
-            margin-top: 15px;
-            width: 100%;
+        .win-glow {
+            filter: brightness(1.5) contrast(1.2);
+            box-shadow: inset 0 0 20px #ffd700;
+            outline: 4px solid #ffd700; outline-offset: -4px;
+            z-index: 10; animation: pulse-glow 0.4s infinite alternate;
+        }
+        @keyframes pulse-glow { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+        #yakari-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center;
+            align-items: center; z-index: 2000; pointer-events: none;
+        }
+        #yakari-text {
+            font-size: 14vw; color: #ff0000; text-shadow: 5px 5px 0 #fff, -5px -5px 20px #f00;
+            font-weight: 900; animation: yakari-anim 0.2s infinite;
+        }
+        @keyframes yakari-anim {
+            0% { transform: scale(1) rotate(3deg); }
+            50% { transform: scale(1.3) rotate(-3deg); }
+            100% { transform: scale(1) rotate(3deg); }
         }
 
-        .bet-row {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .balance-info {
-            font-size: clamp(16px, 5vw, 24px);
-            color: #0f0;
-            text-shadow: 0 0 10px rgba(0,255,0,0.3);
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+        .controls { margin-top: 15px; width: 100%; }
+        .bet-row { display: flex; justify-content: center; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+        .balance-info { font-size: clamp(16px, 5vw, 24px); color: #0f0; font-weight: bold; }
+        .free-spins-info { color: #ffd700; font-size: 20px; display: none; margin-top: 5px; }
 
         .bet-btn {
-            background: #200; 
-            color: white; 
-            border: 2px solid #f00;
-            padding: 8px 12px; 
-            cursor: pointer; 
-            border-radius: 8px;
-            font-weight: bold; 
-            font-size: 13px;
-            transition: 0.2s;
+            background: #200; color: white; border: 2px solid #f00;
+            padding: 8px 12px; cursor: pointer; border-radius: 8px; font-weight: bold;
         }
-        .bet-btn.active { 
-            background: #ffd700; 
-            color: black; 
-            border-color: #fff; 
-            box-shadow: 0 0 10px #ffd700;
-        }
+        .bet-btn.active { background: #ffd700; color: black; box-shadow: 0 0 10px #ffd700; }
 
         .spin-btn {
-            font-size: clamp(22px, 6vw, 32px); 
-            padding: 12px 50px; 
-            cursor: pointer; 
-            border-radius: 50px;
-            border: none; 
-            background: linear-gradient(#f00, #800);
-            color: white; 
-            font-weight: 900;
-            box-shadow: 0 4px 0 #400;
-            text-transform: uppercase;
+            font-size: clamp(22px, 6vw, 32px); padding: 12px 50px; cursor: pointer;
+            border-radius: 50px; border: none; background: linear-gradient(#f00, #800);
+            color: white; font-weight: 900; box-shadow: 0 4px 0 #400; text-transform: uppercase;
         }
-        .spin-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #400; }
-        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+        .spin-btn.free-mode { background: linear-gradient(#ffd700, #b8860b); color: #000; box-shadow: 0 4px 0 #540; }
+        .spin-btn:disabled { opacity: 0.5; filter: grayscale(1); }
 
-        #result { 
-            font-size: clamp(18px, 6vw, 35px); 
-            margin-top: 10px; 
-            min-height: 40px; 
-            font-weight: 900; 
-        }
-        
-        .win-shake {
-            color: #ffd700;
-            text-shadow: 0 0 20px #f00, 0 0 40px #ffd700;
-            animation: shake 0.2s infinite;
-        }
-        @keyframes shake {
-            0% { transform: scale(1.1) rotate(1deg); }
-            100% { transform: scale(1.1) rotate(-1deg); }
-        }
-
+        #result { font-size: clamp(18px, 6vw, 35px); margin-top: 10px; min-height: 40px; font-weight: 900; }
         #canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000; }
     </style>
 </head>
 <body>
 
+<div id="yakari-overlay"><div id="yakari-text">YAKARIIIIIIII</div></div>
 <canvas id="canvas"></canvas>
+
 <audio id="audio-win" src="win.wav" preload="auto"></audio>
 <audio id="audio-spin" src="spin.mp3" preload="auto"></audio>
+<audio id="audio-yakari" src="yakari.mp3" preload="auto"></audio>
 
 <div class="vegas-sign">
     <div style="color: #ffd700; font-size: 11px; letter-spacing: 2px;">✦ WELCOME ✦</div>
@@ -187,13 +122,14 @@
     </div>
 
     <div class="controls">
-        <div class="bet-row">
+        <div class="bet-row" id="bet-container">
             <button class="bet-btn active" onclick="setBet(50, this)">50 RON</button>
             <button class="bet-btn" onclick="setBet(100, this)">100 RON</button>
             <button class="bet-btn" onclick="setBet(250, this)">250 RON</button>
             <button class="bet-btn" onclick="setBet(500, this)">500 RON</button>
         </div>
         <div class="balance-info">BALANȚĂ: <span id="balance-val">10000</span> RON</div>
+        <div id="fs-display" class="free-spins-info">ROTIRI GRATUITE: <span id="fs-count">0</span></div>
     </div>
 
     <button id="spin-btn" class="spin-btn" onclick="spin()">SPIN!</button>
@@ -204,23 +140,29 @@
     let wallet = 10000;
     let currentBet = 50;
     let isSpinning = false;
+    let freeSpins = 0;
     let audioUnlocked = false;
+    let winSoundTimer;
 
-    const symbols = ["Image (2).jpg", "Image (3).jpg", "Image (4).jpg", "wild.jpg"];
-    const itemsCount = 40;
+    const symbols = [
+        "speciala.jpg", "Image (3).jpg", "Image (4).jpg", 
+        "Image (5).jpeg", "Image (6).jpeg", "Image (7).jpeg", "wild.jpg"
+    ];
+    const itemsCount = 60; 
 
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     let moneyParticles = [];
     const sndWin = document.getElementById('audio-win');
     const sndSpin = document.getElementById('audio-spin');
+    const sndYakari = document.getElementById('audio-yakari');
 
-    function getImgHeight() {
-        return document.querySelector('.reel').offsetHeight;
+    function getSingleImgHeight() {
+        const firstImg = document.querySelector('.reel-strip img');
+        return firstImg ? firstImg.offsetHeight : 0;
     }
 
     function init() {
-        const imgH = getImgHeight();
         document.querySelectorAll('.reel-strip').forEach(s => {
             s.innerHTML = '';
             for(let i=0; i<itemsCount; i++){
@@ -228,113 +170,162 @@
                 img.src = symbols[Math.floor(Math.random()*symbols.length)];
                 s.appendChild(img);
             }
-            s.style.transition = "none";
-            s.style.top = `-${(itemsCount-1)*imgH}px`;
         });
+        setTimeout(() => {
+            const h = getSingleImgHeight();
+            document.querySelectorAll('.reel-strip').forEach(s => {
+                s.style.top = `-${(itemsCount - 3) * h}px`;
+            });
+        }, 200);
     }
 
     function setBet(v, b) {
-        if(isSpinning) return;
+        if(isSpinning || freeSpins > 0) return;
         currentBet = v;
         document.querySelectorAll('.bet-btn').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
     }
 
+    function stopAllSounds() {
+        clearTimeout(winSoundTimer);
+        [sndWin, sndYakari, sndSpin].forEach(s => {
+            s.pause();
+            s.currentTime = 0;
+        });
+    }
+
     function spin() {
         if(isSpinning) return;
-        if(wallet < currentBet) return alert("N-ai bani, prostovane!");
-
-        // DEBLOCARE AUDIO (PENTRU BROWSER)
+        if(freeSpins === 0 && wallet < currentBet) return;
+        stopAllSounds();
+        document.querySelectorAll('img').forEach(img => img.classList.remove('win-glow'));
         if(!audioUnlocked) {
-            [sndWin, sndSpin].forEach(track => {
-                track.play().then(() => {
-                    track.pause();
-                    track.currentTime = 0;
-                }).catch(e => console.log("Audio waiting..."));
+            [sndWin, sndSpin, sndYakari].forEach(track => {
+                track.play().then(() => { track.pause(); track.currentTime = 0; }).catch(e => {});
             });
             audioUnlocked = true;
         }
-        
         isSpinning = true;
-        wallet -= currentBet;
-        document.getElementById('balance-val').innerText = wallet;
-        
-        // REDARE SUNET SPIN
-        sndSpin.currentTime = 0;
-        sndSpin.play().catch(e => console.log("Eroare sunet spin"));
-
+        if(freeSpins > 0) {
+            freeSpins--;
+            updateFSDisplay();
+        } else {
+            wallet -= currentBet;
+            document.getElementById('balance-val').innerText = wallet;
+        }
+        sndSpin.play().catch(e => {});
         const btn = document.getElementById('spin-btn');
         const res = document.getElementById('result');
-        const imgH = getImgHeight();
-        
+        const imgH = getSingleImgHeight();
         btn.disabled = true;
-        res.innerText = "NOROC...";
+        res.innerText = freeSpins > 0 ? "YAKARI SPINS..." : "NOROC...";
         res.style.color = "gray";
-        res.classList.remove('win-shake');
-
-        let results = [];
+        let stopIndices = [];
         for(let i=1; i<=3; i++) {
             let s = document.getElementById('strip'+i);
-            let idx = Math.floor(Math.random()*symbols.length);
-            results.push(s.children[idx].src);
-            
             s.style.transition = "none";
-            s.style.top = `-${(itemsCount-1)*imgH}px`;
+            s.style.top = `-${(itemsCount - 3) * imgH}px`;
             s.offsetHeight; 
-
-            s.style.transition = `top ${1.5+i*0.5}s cubic-bezier(0.1, 0, 0.1, 1)`;
-            s.style.top = `-${idx*imgH}px`;
+            let stopIdx = Math.floor(Math.random() * (itemsCount / 2)); 
+            stopIndices.push(stopIdx);
+            s.style.transition = `top ${1.2 + i * 0.3}s cubic-bezier(0.1, 0, 0.1, 1)`;
+            s.style.top = `-${stopIdx * imgH}px`;
         }
-
         setTimeout(() => {
-            // OPRIM SUNETUL DE SPIN ÎNAINTE DE REZULTAT
             sndSpin.pause();
-            sndSpin.currentTime = 0;
-            
-            checkWin(results);
+            checkWin3x3(stopIndices);
             btn.disabled = false;
             isSpinning = false;
-        }, 3200);
+            if(freeSpins > 0) setTimeout(spin, 1800);
+        }, 2800);
     }
 
-    function checkWin(paths) {
+    function checkWin3x3(stopIndices) {
         const res = document.getElementById('result');
-        const s = paths.map(p => decodeURIComponent(p.split('/').pop()));
-        let nonW = s.filter(x => x !== "wild.jpg");
-        let dom = nonW.length > 0 ? nonW[0] : "wild.jpg";
-        let win = s.every(x => x === dom || x === "wild.jpg");
-
-        if(win) {
+        const strips = [document.getElementById('strip1'), document.getElementById('strip2'), document.getElementById('strip3')];
+        const matrix = [
+            [strips[0].children[stopIndices[0]], strips[0].children[stopIndices[0]+1], strips[0].children[stopIndices[0]+2]],
+            [strips[1].children[stopIndices[1]], strips[1].children[stopIndices[1]+1], strips[1].children[stopIndices[1]+2]],
+            [strips[2].children[stopIndices[2]], strips[2].children[stopIndices[2]+1], strips[2].children[stopIndices[2]+2]]
+        ];
+        const paylines = [
+            [matrix[0][0], matrix[1][0], matrix[2][0]], [matrix[0][1], matrix[1][1], matrix[2][1]], [matrix[0][2], matrix[1][2], matrix[2][2]],
+            [matrix[0][0], matrix[1][1], matrix[2][2]], [matrix[0][2], matrix[1][1], matrix[2][0]]
+        ];
+        let totalWin = 0;
+        let specialTriggered = false;
+        paylines.forEach(line => {
+            let names = line.map(img => decodeURIComponent(img.src.split('/').pop()));
+            let nonWild = names.filter(n => n !== "wild.jpg");
+            let base = nonWild.length > 0 ? nonWild[0] : "wild.jpg";
+            if(names.every(n => n === base || n === "wild.jpg")) {
+                let mult = 15;
+                if(base === "speciala.jpg") { specialTriggered = true; mult = 150; }
+                else if(base.includes("(4)") || base === "wild.jpg") { mult = 50; }
+                totalWin += currentBet * mult;
+                line.forEach(img => img.classList.add('win-glow'));
+            }
+        });
+        if(specialTriggered) triggerYakari();
+        else if(totalWin > 0) {
             sndWin.currentTime = 0;
-            sndWin.play().catch(e => console.log("Eroare sunet win"));
-            
-            setTimeout(() => {
-                sndWin.pause();
-                sndWin.currentTime = 0;
-            }, 4000);
-
-            let mult = dom.includes("(4)") || dom === "wild.jpg" ? 100 : dom.includes("(3)") ? 20 : 10;
-            wallet += currentBet * mult;
+            sndWin.play();
+            winSoundTimer = setTimeout(() => { sndWin.pause(); }, 3000);
+        }
+        if(totalWin > 0) {
+            wallet += totalWin;
             document.getElementById('balance-val').innerText = wallet;
-            res.innerText = "L-AI RUPT BAAAAA!";
+            res.innerText = "CÂȘTIG: " + totalWin + " RON";
             res.style.color = "#ffd700";
-            res.classList.add('win-shake');
             rainMoney();
         } else {
-            res.innerText = "MAI BAGĂ O FISĂ!";
+            res.innerText = freeSpins > 0 ? "DĂ-I YAKARI!" : "MAI BAGĂ O FISĂ!";
             res.style.color = "white";
         }
     }
 
+    function triggerYakari() {
+        stopAllSounds(); sndYakari.play();
+        const overlay = document.getElementById('yakari-overlay');
+        overlay.style.display = 'flex';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+            freeSpins += 10;
+            updateFSDisplay();
+        }, 3000);
+    }
+
+    function updateFSDisplay() {
+        const fsDisplay = document.getElementById('fs-display');
+        const fsCount = document.getElementById('fs-count');
+        const spinBtn = document.getElementById('spin-btn');
+        const betContainer = document.getElementById('bet-container');
+        if(freeSpins > 0) {
+            fsDisplay.style.display = 'block';
+            fsCount.innerText = freeSpins;
+            spinBtn.classList.add('free-mode');
+            spinBtn.innerText = "YAKARI SPIN";
+            betContainer.style.opacity = "0.3";
+        } else {
+            fsDisplay.style.display = 'none';
+            spinBtn.innerText = "SPIN!";
+            spinBtn.classList.remove('free-mode');
+            betContainer.style.opacity = "1";
+        }
+    }
+
+    // --- EFECTUL DE PLOAIE DE DOLARI ACTUALIZAT ---
     function rainMoney() {
         for(let i=0; i<100; i++) {
             moneyParticles.push({
-                x: Math.random() * canvas.width,
-                y: -50,
-                w: 50, h: 25,
-                speedY: 4 + Math.random() * 6,
-                rot: Math.random() * 360,
-                rotSpeed: (Math.random() - 0.5) * 15
+                x: Math.random() * canvas.width, 
+                y: -50, 
+                w: 60, // Bancnote mai lungi
+                h: 30, 
+                speedY: 2 + Math.random() * 5, 
+                rot: Math.random() * 360, 
+                rotSpeed: (Math.random() - 0.5) * 10,
+                swing: Math.random() * 5 // Mișcare laterală
             });
         }
     }
@@ -342,32 +333,45 @@
     function draw() {
         ctx.clearRect(0,0,canvas.width,canvas.height);
         moneyParticles.forEach((p, i) => {
-            p.y += p.speedY; p.rot += p.rotSpeed;
+            p.y += p.speedY; 
+            p.rot += p.rotSpeed;
+            p.x += Math.sin(p.y / 30) * 2; // Pendulare stânga-dreapta
+
             ctx.save();
-            ctx.translate(p.x, p.y);
+            ctx.translate(p.x, p.y); 
             ctx.rotate(p.rot * Math.PI / 180);
-            ctx.fillStyle = "#2e7d32";
+            
+            // Desenăm fundalul bancnotei (verde)
+            ctx.fillStyle = "#2e7d32"; 
             ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
-            ctx.strokeStyle = "#fff";
+            
+            // Contur alb
+            ctx.strokeStyle = "#fff"; 
+            ctx.lineWidth = 1;
             ctx.strokeRect(-p.w/2, -p.h/2, p.w, p.h);
+            
+            // Adăugăm simbolul $
+            ctx.fillStyle = "white";
+            ctx.font = "bold 18px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText("$", 0, 0); 
+            
             ctx.restore();
+            
             if(p.y > canvas.height + 50) moneyParticles.splice(i, 1);
         });
         requestAnimationFrame(draw);
     }
 
     window.onload = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         init(); draw();
     };
 
     window.onresize = () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        init();
-    }
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    };
 </script>
-
 </body>
 </html>
