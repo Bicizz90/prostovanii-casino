@@ -54,7 +54,6 @@
             text-shadow: 2px 2px 0 #000;
         }
 
-        /* --- APARATUL --- */
         .machine {
             background: linear-gradient(180deg, #300 0%, #100 100%);
             padding: 15px;
@@ -95,7 +94,6 @@
             object-fit: cover; 
         }
 
-        /* --- CONTROALE --- */
         .controls {
             margin-top: 15px;
             width: 100%;
@@ -174,6 +172,7 @@
 
 <canvas id="canvas"></canvas>
 <audio id="audio-win" src="win.wav" preload="auto"></audio>
+<audio id="audio-spin" src="spin.mp3" preload="auto"></audio>
 
 <div class="vegas-sign">
     <div style="color: #ffd700; font-size: 11px; letter-spacing: 2px;">✦ WELCOME ✦</div>
@@ -214,6 +213,7 @@
     const ctx = canvas.getContext('2d');
     let moneyParticles = [];
     const sndWin = document.getElementById('audio-win');
+    const sndSpin = document.getElementById('audio-spin');
 
     function getImgHeight() {
         return document.querySelector('.reel').offsetHeight;
@@ -244,19 +244,25 @@
         if(isSpinning) return;
         if(wallet < currentBet) return alert("N-ai bani, prostovane!");
 
-        // DEBLOCARE AUDIO LA PRIMUL CLICK (PENTRU BROWSER)
+        // DEBLOCARE AUDIO (PENTRU BROWSER)
         if(!audioUnlocked) {
-            sndWin.play().then(() => {
-                sndWin.pause();
-                sndWin.currentTime = 0;
-                audioUnlocked = true;
-            }).catch(e => console.log("Audio waiting for interaction"));
+            [sndWin, sndSpin].forEach(track => {
+                track.play().then(() => {
+                    track.pause();
+                    track.currentTime = 0;
+                }).catch(e => console.log("Audio waiting..."));
+            });
+            audioUnlocked = true;
         }
         
         isSpinning = true;
         wallet -= currentBet;
         document.getElementById('balance-val').innerText = wallet;
         
+        // REDARE SUNET SPIN
+        sndSpin.currentTime = 0;
+        sndSpin.play().catch(e => console.log("Eroare sunet spin"));
+
         const btn = document.getElementById('spin-btn');
         const res = document.getElementById('result');
         const imgH = getImgHeight();
@@ -274,13 +280,17 @@
             
             s.style.transition = "none";
             s.style.top = `-${(itemsCount-1)*imgH}px`;
-            s.offsetHeight; // force reflow
+            s.offsetHeight; 
 
             s.style.transition = `top ${1.5+i*0.5}s cubic-bezier(0.1, 0, 0.1, 1)`;
             s.style.top = `-${idx*imgH}px`;
         }
 
         setTimeout(() => {
+            // OPRIM SUNETUL DE SPIN ÎNAINTE DE REZULTAT
+            sndSpin.pause();
+            sndSpin.currentTime = 0;
+            
             checkWin(results);
             btn.disabled = false;
             isSpinning = false;
@@ -295,11 +305,9 @@
         let win = s.every(x => x === dom || x === "wild.jpg");
 
         if(win) {
-            // REDARE SUNET
             sndWin.currentTime = 0;
-            sndWin.play().catch(e => console.log("Eroare sunet:", e));
+            sndWin.play().catch(e => console.log("Eroare sunet win"));
             
-            // Oprește sunetul după 4 secunde
             setTimeout(() => {
                 sndWin.pause();
                 sndWin.currentTime = 0;
